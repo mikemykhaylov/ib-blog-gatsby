@@ -13,13 +13,19 @@
     "eslint": "eslint -c ./.eslintrc.yml \"./src/**/*.js?(x)\""
   },
   "dependencies": {
+    "babel-plugin-styled-components": "^1.11.1",
+    "date-fns": "^2.16.1",
     "gatsby": "^2.24.67",
+    "gatsby-plugin-styled-components": "^3.3.12",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "styled-components": "^5.2.0"
   },
   "devDependencies": {
     "eslint": "^7.10.0",
     "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-react": "^7.21.3",

@@ -5,6 +5,7 @@
  */
 
 module.exports = {
+  siteMetadata: {},
   /* Your site config here */
-  plugins: [],
+  plugins: ['gatsby-plugin-styled-components'],
 };
