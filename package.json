@@ -1,0 +1,29 @@
+{
+  "name": "gatsby-starter-hello-world",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "gatsby build",
+    "dev": "gatsby develop",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "start": "gatsby serve",
+    "clean": "gatsby clean",
+    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
+    "prettier": "prettier --config ./.prettierrc.yml --write \"./src/**/*.js?(x)\"",
+    "eslint": "eslint -c ./.eslintrc.yml \"./src/**/*.js?(x)\""
+  },
+  "dependencies": {
+    "gatsby": "^2.24.67",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.21.3",
+    "eslint-plugin-react-hooks": "^4.1.2",
+    "prettier": "2.1.2"
+  }
+}
