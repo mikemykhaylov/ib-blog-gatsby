@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { graphql } from 'gatsby';
+import { graphql, navigate } from 'gatsby';
 import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { fromUnixTime } from 'date-fns';
@@ -108,6 +108,17 @@ const Home = ({ data, location, pageContext }) => {
       tag: currentTagFilter !== 'All' ? currentTagFilter : null,
     },
   });
+
+  useEffect(() => {
+    loadWithTags();
+    return () => {};
+  }, [currentTagFilter]);
+
+  const handleTagFilterChange = (tag) => {
+    navigate(`/page/1${tag !== 'All' ? `?tag=${tag}` : ''}`);
+    setCurrentTagFilter(tag);
+  };
+
   let pageContent;
 
   if (currentTagFilter === 'All') {
@@ -151,10 +162,6 @@ const Home = ({ data, location, pageContext }) => {
   } else {
     pageContent = <Loading height="100px" width="100%" />;
   }
-  useEffect(() => {
-    setCurrentTagFilter(queryString.parse(location.search).tag || 'All');
-    loadWithTags();
-  }, [location.search]);
   return (
     <Layout>
       <MainHeading>Let&apos;s talk science</MainHeading>
@@ -163,11 +170,16 @@ const Home = ({ data, location, pageContext }) => {
         earum, possimus deleniti sed? Dolorum quae velit pariatur provident ducimus, beatae rerum
         dolorem ut deleniti nam facere, molestiae illum!
       </MainText>
+      <MainText>{location.search}</MainText>
       <TagContainer>
         {tags.map((tag) => (
-          <DestyledLink key={tag} to={`/page/1${tag !== 'All' ? `?tag=${tag}` : ''}`}>
-            <TagFilter active={tag === currentTagFilter}>{tag}</TagFilter>
-          </DestyledLink>
+          <TagFilter
+            key={tag}
+            active={tag === currentTagFilter}
+            onClick={() => handleTagFilterChange(tag)}
+          >
+            {tag}
+          </TagFilter>
         ))}
       </TagContainer>
       {pageContent}
