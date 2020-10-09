@@ -22,5 +22,24 @@ module.exports = {
         url: 'https://py89pcivba.execute-api.eu-central-1.amazonaws.com/dev/graphql',
       },
     },
+    `gatsby-plugin-react-helmet`,
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
+    {
+      resolve: 'gatsby-source-s3-image',
+      options: {
+        bucketName: 'ib-blog-user-data',
+        region: "eu-central-1",
+      },
+    },
+    {
+      resolve: `gatsby-plugin-nprogress`,
+      options: {
+        // Setting a color is optional.
+        color: `#3db1ff`,
+        // Disable the loading spinner.
+        showSpinner: true,
+      },
+    },
   ],
 };

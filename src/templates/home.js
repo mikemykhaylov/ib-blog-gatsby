@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { graphql } from 'gatsby';
+import { useLazyQuery } from '@apollo/client';
+import gql from 'graphql-tag';
 import { fromUnixTime } from 'date-fns';
 import queryString from 'query-string';
 import Layout from '../components/Layout';
@@ -9,6 +11,7 @@ import { Heading2, Text } from '../components/general/Headings';
 import Post from '../components/general/Post';
 import { DestyledLink, PrimaryButton } from '../components/general/Buttons';
 import { lightPrimaryColor, primaryColor } from '../constants/websiteColors';
+import Loading from '../components/general/Loading';
 
 const MainHeading = styled(Heading2)`
   margin-bottom: 2rem;
@@ -70,6 +73,25 @@ const LoadMoreContainer = styled.div`
   }
 `;
 
+export const APOLLO_QUERY = gql`
+  query GetPage($pageNumber: Int, $pageSize: Int, $tag: String) {
+    posts(pageNumber: $pageNumber, pageSize: $pageSize, tag: $tag) {
+      hasMore
+      posts {
+        author
+        description
+        indexName
+        image
+        postedOn
+        tag
+        title
+        readingTime
+        _id
+      }
+    }
+  }
+`;
+
 const Home = ({ data, location, pageContext }) => {
   const { posts: gatsbyPosts } = data.ibBlog.posts;
 
@@ -77,25 +99,19 @@ const Home = ({ data, location, pageContext }) => {
   const [currentTagFilter, setCurrentTagFilter] = useState(
     queryString.parse(location.search).tag || 'All',
   );
-  return (
-    <Layout>
-      <MainHeading>Let&apos;s talk science</MainHeading>
-      <MainText>
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Facilis voluptate exercitationem
-        earum, possimus deleniti sed? Dolorum quae velit pariatur provident ducimus, beatae rerum
-        dolorem ut deleniti nam facere, molestiae illum!
-      </MainText>
-      <TagContainer>
-        {tags.map((tag) => (
-          <TagFilter
-            key={tag}
-            active={tag === currentTagFilter}
-            // onClick={() => handleTagFilterChange(tag)}
-          >
-            {tag}
-          </TagFilter>
-        ))}
-      </TagContainer>
+
+  const [loadWithTags, { data: apolloData }] = useLazyQuery(APOLLO_QUERY, {
+    skip: currentTagFilter === 'All',
+    variables: {
+      pageNumber: pageContext.pageNumber,
+      pageSize: 28,
+      tag: currentTagFilter !== 'All' ? currentTagFilter : null,
+    },
+  });
+  let pageContent;
+
+  if (currentTagFilter === 'All') {
+    pageContent = (
       <PostsRow>
         {gatsbyPosts.map((post, i) => (
           <Post
@@ -112,6 +128,49 @@ const Home = ({ data, location, pageContext }) => {
           />
         ))}
       </PostsRow>
+    );
+  } else if (apolloData) {
+    pageContent = (
+      <PostsRow>
+        {apolloData.posts.posts.map((post, i) => (
+          <Post
+            key={post._id}
+            isHuge={i % 7 === 0}
+            author={post.author}
+            description={post.description}
+            image={post.image}
+            postedOn={fromUnixTime(post.postedOn / 1000)}
+            tag={post.tag}
+            title={post.title}
+            indexName={post.indexName}
+            readingTime={post.readingTime}
+          />
+        ))}
+      </PostsRow>
+    );
+  } else {
+    pageContent = <Loading height="100px" width="100%" />;
+  }
+  useEffect(() => {
+    setCurrentTagFilter(queryString.parse(location.search).tag || 'All');
+    loadWithTags();
+  }, [location.search]);
+  return (
+    <Layout>
+      <MainHeading>Let&apos;s talk science</MainHeading>
+      <MainText>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Facilis voluptate exercitationem
+        earum, possimus deleniti sed? Dolorum quae velit pariatur provident ducimus, beatae rerum
+        dolorem ut deleniti nam facere, molestiae illum!
+      </MainText>
+      <TagContainer>
+        {tags.map((tag) => (
+          <DestyledLink key={tag} to={`/page/1${tag !== 'All' ? `?tag=${tag}` : ''}`}>
+            <TagFilter active={tag === currentTagFilter}>{tag}</TagFilter>
+          </DestyledLink>
+        ))}
+      </TagContainer>
+      {pageContent}
       <LoadMoreContainer>
         {pageContext.pageNumber > 1 && (
           <PrimaryButton type="button">
@@ -171,7 +230,7 @@ Home.propTypes = {
 export default Home;
 
 export const query = graphql`
-  query MyQuery($pageNumber: Int, $pageSize: Int) {
+  query GetPage($pageNumber: Int, $pageSize: Int) {
     ibBlog {
       posts(pageNumber: $pageNumber, pageSize: $pageSize) {
         hasMore
