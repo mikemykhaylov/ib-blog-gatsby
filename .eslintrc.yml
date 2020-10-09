@@ -3,7 +3,7 @@ env:
   es2021: true
   node: true
 extends:
-  - 'plugin:react/recommended'
+  - "plugin:react/recommended"
   - airbnb
   - prettier
 parserOptions:
@@ -13,13 +13,17 @@ parserOptions:
   sourceType: module
 plugins:
   - react
-rules: 
+rules:
   react/jsx-filename-extension:
     - 1
     - extensions:
-      - .js
-      - .jsx
+        - .js
+        - .jsx
   react/prop-types:
     - 1
     - ignore:
-      - children
+        - children
+  no-underscore-dangle:
+    - error
+    - allow:
+        - _id

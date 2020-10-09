@@ -46,7 +46,7 @@ const PostInfo = styled.div`
   }
 `;
 
-const PostLink = styled.a`
+const PostLink = styled(Link)`
   text-decoration: none;
   display: flex;
   justify-content: space-between;
@@ -108,24 +108,22 @@ const Post = ({
     <Container isHuge={isHuge}>
       <Image isHuge={isHuge} src={image} />
       <PostInfo isHuge={isHuge}>
-        <Link href={`/post/${indexName}`}>
-          <PostLink>
-            <PostOverview>
-              <PostTag color={primaryColor}>{`#${tag}`}</PostTag>
-              <PostTitle>{title}</PostTitle>
-              <PostDescription color={grayColor}>{description}</PostDescription>
-            </PostOverview>
-            <PostMeta>
-              <Text>{author}</Text>
-              <PostTimeData>
-                <Time color={grayColor} height={16} />
-                <Text color={grayColor}>{`${readingTime} min read`}</Text>
-                <Text color={grayColor}>|</Text>
-                <Text color={grayColor}>{postDataFormatted}</Text>
-              </PostTimeData>
-            </PostMeta>
-          </PostLink>
-        </Link>
+        <PostLink to={`/post/${indexName}`}>
+          <PostOverview>
+            <PostTag color={primaryColor}>{`#${tag}`}</PostTag>
+            <PostTitle>{title}</PostTitle>
+            <PostDescription color={grayColor}>{description}</PostDescription>
+          </PostOverview>
+          <PostMeta>
+            <Text>{author}</Text>
+            <PostTimeData>
+              <Time color={grayColor} height={16} />
+              <Text color={grayColor}>{`${readingTime} min read`}</Text>
+              <Text color={grayColor}>|</Text>
+              <Text color={grayColor}>{postDataFormatted}</Text>
+            </PostTimeData>
+          </PostMeta>
+        </PostLink>
       </PostInfo>
     </Container>
   );
