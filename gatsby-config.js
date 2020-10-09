@@ -26,19 +26,14 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
-      resolve: 'gatsby-source-s3-image',
+      resolve: '@robinmetral/gatsby-source-s3',
       options: {
-        bucketName: 'ib-blog-user-data',
-        region: "eu-central-1",
-      },
-    },
-    {
-      resolve: `gatsby-plugin-nprogress`,
-      options: {
-        // Setting a color is optional.
-        color: `#3db1ff`,
-        // Disable the loading spinner.
-        showSpinner: true,
+        buckets: ['ib-blog-user-data'],
+        aws: {
+          region: 'eu-central-1',
+          accessKeyId: process.env.AWS_API_KEY,
+          secretAccessKey: process.env.AWS_SECRET_KEY,
+        },
       },
     },
   ],

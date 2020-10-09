@@ -34,7 +34,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       },
     });
   });
-// Creating index page
+  // Creating index page
   // createPage({
   //   path: `/`,
   //   component: path.resolve('./src/templates/home.js'),
