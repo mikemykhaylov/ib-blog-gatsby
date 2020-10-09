@@ -1,0 +1,7 @@
+[build]
+command = "yarn build"
+publish = "public"
+[[redirects]]
+from = "/"
+status = 301
+to = "/page/1"
