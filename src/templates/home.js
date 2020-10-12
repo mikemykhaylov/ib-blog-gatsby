@@ -170,7 +170,6 @@ const Home = ({ data, location, pageContext }) => {
         earum, possimus deleniti sed? Dolorum quae velit pariatur provident ducimus, beatae rerum
         dolorem ut deleniti nam facere, molestiae illum!
       </MainText>
-      <MainText>{location.search}</MainText>
       <TagContainer>
         {tags.map((tag) => (
           <TagFilter
