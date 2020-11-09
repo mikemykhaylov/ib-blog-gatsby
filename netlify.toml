@@ -5,3 +5,5 @@ publish = "public"
 from = "/"
 status = 301
 to = "/page/1"
+[[plugins]]
+package = "netlify-plugin-gatsby-cache"
