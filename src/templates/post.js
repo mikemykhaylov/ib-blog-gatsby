@@ -130,6 +130,15 @@ SinglePost.propTypes = {
         content: PropTypes.string,
       }),
     }),
+    imageSharp: PropTypes.shape({
+      fluid: PropTypes.shape({
+        aspectRatio: PropTypes.number,
+        base64: PropTypes.string,
+        sizes: PropTypes.string,
+        src: PropTypes.string,
+        srcSet: PropTypes.string,
+      }),
+    }).isRequired,
   }).isRequired,
 };
 

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { Link } from 'gatsby';
+import Img from 'gatsby-image';
 import { formatDistance } from 'date-fns';
 import { grayColor, primaryColor } from '../../constants/websiteColors';
 import Time from '../icons/Time';
@@ -21,12 +22,12 @@ const Container = styled.article`
   }
 `;
 
-const Image = styled.img`
+const ImageBlock = styled.div`
   height: 200px;
-  object-fit: cover;
   border-radius: 4px;
   margin-bottom: 20px;
   width: 100%;
+  overflow: hidden;
   @media (min-width: 992px) {
     margin-bottom: ${(props) => (props.isHuge ? '0px' : '')};
     margin-right: ${(props) => (props.isHuge ? '60px' : '')};
@@ -97,16 +98,18 @@ const Post = ({
   author,
   readingTime,
   description,
-  image,
   postedOn,
   tag,
   title,
   indexName,
+  fluidImage,
 }) => {
   const postDataFormatted = `${formatDistance(new Date(), postedOn)} ago`;
   return (
     <Container isHuge={isHuge}>
-      <Image isHuge={isHuge} src={image} />
+      <ImageBlock isHuge={isHuge}>
+        <Img fluid={fluidImage} />
+      </ImageBlock>
       <PostInfo isHuge={isHuge}>
         <PostLink to={`/post/${indexName}`}>
           <PostOverview>
@@ -134,11 +137,17 @@ Post.propTypes = {
   author: PropTypes.string.isRequired,
   readingTime: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired,
-  image: PropTypes.string.isRequired,
   postedOn: PropTypes.instanceOf(Date).isRequired,
   tag: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   indexName: PropTypes.string.isRequired,
+  fluidImage: PropTypes.shape({
+    aspectRatio: PropTypes.number,
+    base64: PropTypes.string,
+    sizes: PropTypes.string,
+    src: PropTypes.string,
+    srcSet: PropTypes.string,
+  }).isRequired,
 };
 
 Post.defaultProps = {

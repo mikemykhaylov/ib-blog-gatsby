@@ -5,10 +5,12 @@ const fontFaces = `
 @font-face {
   font-family: 'Heebo';
   src: url(${HeeboVariableWoff2}) format('woff2-variations');
+  font-display: swap;
 }
 @font-face {
   font-family: 'Raleway';
   src: url(${RalewayVariableWoff2}) format('woff2-variations');
+  font-display: swap;
 }`;
 
 export default fontFaces;

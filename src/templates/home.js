@@ -28,7 +28,9 @@ const MainText = styled(Text)`
 const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 2.5rem;
+  & > * {
+    margin-bottom: 2.5rem;
+  }
   & > *:not(:last-child) {
     margin-right: 32px;
   }
@@ -93,13 +95,16 @@ export const APOLLO_QUERY = gql`
 `;
 
 const Home = ({ data, location, pageContext }) => {
-  const { posts: gatsbyPosts } = data.ibBlog.posts;
+  const { ibBlog, allImageSharp } = data;
+  const { posts: gatsbyPosts } = ibBlog.posts;
 
+  // Tracking tags
   const tags = ['All', ...new Set([...gatsbyPosts.map((post) => post.tag)])];
   const [currentTagFilter, setCurrentTagFilter] = useState(
     queryString.parse(location.search).tag || 'All',
   );
 
+  // Performing a query on tag change
   const [loadWithTags, { data: apolloData }] = useLazyQuery(APOLLO_QUERY, {
     skip: currentTagFilter === 'All',
     variables: {
@@ -114,6 +119,7 @@ const Home = ({ data, location, pageContext }) => {
     return () => {};
   }, [currentTagFilter]);
 
+  // Tag change handler
   const handleTagFilterChange = (tag) => {
     navigate(`/page/1${tag !== 'All' ? `?tag=${tag}` : ''}`);
     setCurrentTagFilter(tag);
@@ -124,39 +130,51 @@ const Home = ({ data, location, pageContext }) => {
   if (currentTagFilter === 'All') {
     pageContent = (
       <PostsRow>
-        {gatsbyPosts.map((post, i) => (
-          <Post
-            key={post._id}
-            isHuge={i % 7 === 0}
-            author={post.author}
-            description={post.description}
-            image={post.image}
-            postedOn={fromUnixTime(post.postedOn / 1000)}
-            tag={post.tag}
-            title={post.title}
-            indexName={post.indexName}
-            readingTime={post.readingTime}
-          />
-        ))}
+        {gatsbyPosts.map((post, i) => {
+          const postImageRegex = post.image.match(/programming\d+/)[0];
+          const postFluidImage = allImageSharp.edges.find((val) =>
+            val.node.fluid.src.includes(postImageRegex),
+          ).node.fluid;
+          return (
+            <Post
+              key={post._id}
+              isHuge={i % 7 === 0}
+              author={post.author}
+              description={post.description}
+              postedOn={fromUnixTime(post.postedOn / 1000)}
+              tag={post.tag}
+              title={post.title}
+              indexName={post.indexName}
+              readingTime={post.readingTime}
+              fluidImage={postFluidImage}
+            />
+          );
+        })}
       </PostsRow>
     );
   } else if (apolloData) {
     pageContent = (
       <PostsRow>
-        {apolloData.posts.posts.map((post, i) => (
-          <Post
-            key={post._id}
-            isHuge={i % 7 === 0}
-            author={post.author}
-            description={post.description}
-            image={post.image}
-            postedOn={fromUnixTime(post.postedOn / 1000)}
-            tag={post.tag}
-            title={post.title}
-            indexName={post.indexName}
-            readingTime={post.readingTime}
-          />
-        ))}
+        {apolloData.posts.posts.map((post, i) => {
+          const postImageRegex = post.image.match(/programming\d+/)[0];
+          const postFluidImage = allImageSharp.edges.find((val) =>
+            val.node.fluid.src.includes(postImageRegex),
+          ).node.fluid;
+          return (
+            <Post
+              key={post._id}
+              isHuge={i % 7 === 0}
+              author={post.author}
+              description={post.description}
+              postedOn={fromUnixTime(post.postedOn / 1000)}
+              tag={post.tag}
+              title={post.title}
+              indexName={post.indexName}
+              readingTime={post.readingTime}
+              fluidImage={postFluidImage}
+            />
+          );
+        })}
       </PostsRow>
     );
   } else {
@@ -229,6 +247,20 @@ Home.propTypes = {
         ),
       }),
     }),
+    allImageSharp: PropTypes.shape({
+      edges: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string,
+          fluid: PropTypes.shape({
+            aspectRatio: PropTypes.number,
+            base64: PropTypes.string,
+            sizes: PropTypes.string,
+            src: PropTypes.string,
+            srcSet: PropTypes.string,
+          }),
+        }),
+      ),
+    }).isRequired,
   }).isRequired,
   location: PropTypes.shape({
     search: PropTypes.string,
@@ -255,6 +287,16 @@ export const query = graphql`
           readingTime
           tag
           title
+        }
+      }
+    }
+    allImageSharp {
+      edges {
+        node {
+          id
+          fluid(maxWidth: 800) {
+            ...GatsbyImageSharpFluid
+          }
         }
       }
     }
