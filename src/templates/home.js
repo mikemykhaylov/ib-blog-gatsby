@@ -32,7 +32,7 @@ const TagContainer = styled.div`
     margin-bottom: 2.5rem;
   }
   & > *:not(:last-child) {
-    margin-right: 32px;
+    margin-right: 24px;
   }
 `;
 
