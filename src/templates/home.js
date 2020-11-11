@@ -106,7 +106,6 @@ const Home = ({ data, location, pageContext }) => {
 
   // Performing a query on tag change
   const [loadWithTags, { data: apolloData }] = useLazyQuery(APOLLO_QUERY, {
-    skip: currentTagFilter === 'All',
     variables: {
       pageNumber: pageContext.pageNumber,
       pageSize: 28,
@@ -115,7 +114,9 @@ const Home = ({ data, location, pageContext }) => {
   });
 
   useEffect(() => {
-    loadWithTags();
+    if (currentTagFilter !== 'All') {
+      loadWithTags();
+    }
     return () => {};
   }, [currentTagFilter]);
 
