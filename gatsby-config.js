@@ -19,7 +19,7 @@ module.exports = {
         // Field under which the remote schema will be accessible. You'll use this in your Gatsby query
         fieldName: 'ibBlog',
         // Url to query from
-        url: 'https://py89pcivba.execute-api.eu-central-1.amazonaws.com/dev/graphql',
+        url: 'https://6g2itzme3h.execute-api.eu-central-1.amazonaws.com/dev/graphql',
       },
     },
     `gatsby-plugin-react-helmet`,

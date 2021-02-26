@@ -76,8 +76,8 @@ const LoadMoreContainer = styled.div`
 `;
 
 export const APOLLO_QUERY = gql`
-  query GetPage($pageNumber: Int, $pageSize: Int, $tag: String) {
-    posts(pageNumber: $pageNumber, pageSize: $pageSize, tag: $tag) {
+  query GetPage($pageNumber: Int!, $tag: String) {
+    getPage(pageNumber: $pageNumber, tag: $tag) {
       hasMore
       posts {
         author
@@ -88,7 +88,7 @@ export const APOLLO_QUERY = gql`
         tag
         title
         readingTime
-        _id
+        id
       }
     }
   }
@@ -96,7 +96,7 @@ export const APOLLO_QUERY = gql`
 
 const Home = ({ data, location, pageContext }) => {
   const { ibBlog, allImageSharp } = data;
-  const { posts: gatsbyPosts } = ibBlog.posts;
+  const gatsbyPosts = ibBlog.getPage.posts;
 
   // Tracking tags
   const tags = ['All', ...new Set([...gatsbyPosts.map((post) => post.tag)])];
@@ -138,7 +138,7 @@ const Home = ({ data, location, pageContext }) => {
           ).node.fluid;
           return (
             <Post
-              key={post._id}
+              key={post.id}
               isHuge={i % 7 === 0}
               author={post.author}
               description={post.description}
@@ -156,14 +156,14 @@ const Home = ({ data, location, pageContext }) => {
   } else if (apolloData) {
     pageContent = (
       <PostsRow>
-        {apolloData.posts.posts.map((post, i) => {
+        {apolloData.getPage.posts.map((post, i) => {
           const postImageRegex = post.image.match(/programming\d+/)[0];
           const postFluidImage = allImageSharp.edges.find((val) =>
             val.node.fluid.src.includes(postImageRegex),
           ).node.fluid;
           return (
             <Post
-              key={post._id}
+              key={post.id}
               isHuge={i % 7 === 0}
               author={post.author}
               description={post.description}
@@ -213,7 +213,7 @@ const Home = ({ data, location, pageContext }) => {
             </DestyledLink>
           </PrimaryButton>
         )}
-        {data.ibBlog.posts.hasMore && (
+        {(apolloData ? apolloData.getPage.hasMore : data.ibBlog.getPage.hasMore) && (
           <PrimaryButton type="button">
             <DestyledLink
               to={`/page/${pageContext.pageNumber + 1}${
@@ -232,7 +232,7 @@ const Home = ({ data, location, pageContext }) => {
 Home.propTypes = {
   data: PropTypes.shape({
     ibBlog: PropTypes.shape({
-      posts: PropTypes.shape({
+      getPage: PropTypes.shape({
         hasMore: PropTypes.bool,
         posts: PropTypes.arrayOf(
           PropTypes.shape({
@@ -244,6 +244,7 @@ Home.propTypes = {
             title: PropTypes.string,
             indexName: PropTypes.string,
             readingTime: PropTypes.number,
+            id: PropTypes.string,
           }),
         ),
       }),
@@ -274,12 +275,12 @@ Home.propTypes = {
 export default Home;
 
 export const query = graphql`
-  query GetPage($pageNumber: Int, $pageSize: Int) {
+  query GetPage($pageNumber: Int!) {
     ibBlog {
-      posts(pageNumber: $pageNumber, pageSize: $pageSize) {
+      getPage(pageNumber: $pageNumber) {
         hasMore
         posts {
-          _id
+          id
           author
           description
           image

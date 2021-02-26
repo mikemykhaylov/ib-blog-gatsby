@@ -15,17 +15,15 @@ const NotFoundContainer = styled.div`
   }
 `;
 
-const NotFound = () => {
-  return (
-    <Layout>
-      <NotFoundContainer>
-        <Heading1>Looks like you are lost</Heading1>
-        <PrimaryButton>
-          <DestyledLink to="/page/1">Return back</DestyledLink>
-        </PrimaryButton>
-      </NotFoundContainer>
-    </Layout>
-  );
-};
+const NotFound = () => (
+  <Layout>
+    <NotFoundContainer>
+      <Heading1>Looks like you are lost</Heading1>
+      <PrimaryButton>
+        <DestyledLink to="/page/1">Return back</DestyledLink>
+      </PrimaryButton>
+    </NotFoundContainer>
+  </Layout>
+);
 
 export default NotFound;

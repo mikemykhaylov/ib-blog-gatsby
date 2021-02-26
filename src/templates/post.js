@@ -79,7 +79,7 @@ const PostImage = styled.div`
 
 const SinglePost = ({ data }) => {
   const { ibBlog, imageSharp } = data;
-  const { post: fetchedPost } = ibBlog;
+  const { getPost: fetchedPost } = ibBlog;
   const postDateFormatted =
     !!fetchedPost.postedOn &&
     `${formatDistance(new Date(), fromUnixTime(fetchedPost.postedOn / 1000))} ago`;
@@ -104,14 +104,12 @@ const SinglePost = ({ data }) => {
         <Img fluid={imageSharp.fluid} />
       </PostImage>
       {!!fetchedPost.content &&
-        fetchedPost.content.split('\n').map((paragraph, i) => {
-          return (
-            <React.Fragment key={i}>
-              <Text>{paragraph}</Text>
-              <br />
-            </React.Fragment>
-          );
-        })}
+        fetchedPost.content.split('\n').map((paragraph, i) => (
+          <React.Fragment key={i}>
+            <Text>{paragraph}</Text>
+            <br />
+          </React.Fragment>
+        ))}
     </Layout>
   );
 };
@@ -119,7 +117,7 @@ const SinglePost = ({ data }) => {
 SinglePost.propTypes = {
   data: PropTypes.shape({
     ibBlog: PropTypes.shape({
-      post: PropTypes.shape({
+      getPost: PropTypes.shape({
         author: PropTypes.string,
         description: PropTypes.string,
         postedOn: PropTypes.string,
@@ -145,10 +143,10 @@ SinglePost.propTypes = {
 export default SinglePost;
 
 export const query = graphql`
-  query GetPost($indexName: ID!, $image: String!) {
+  query getPost($postID: ID!, $image: String!) {
     ibBlog {
-      post(id: $indexName) {
-        _id
+      getPost(postID: $postID) {
+        id
         author
         content
         indexName

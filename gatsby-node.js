@@ -5,14 +5,12 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions;
 
   const { data: fetchedPostsData, errors: errorPostsData } = await graphql(`
-    {
+    query getPosts {
       ibBlog {
-        posts(pageSize: 5000) {
-          posts {
-            _id
-            indexName
-            image
-          }
+        getPosts {
+          id
+          indexName
+          image
         }
       }
     }
@@ -21,36 +19,26 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     reporter.panicOnBuild(`Error while running GraphQL query.`);
     return;
   }
-  const { posts: postIds } = fetchedPostsData.ibBlog.posts;
+  const postIds = fetchedPostsData.ibBlog.getPosts;
   const postsPerPage = 28;
   const numPages = Math.ceil(postIds.length / postsPerPage);
-  Array.from({ length: numPages }).forEach((_, i) => {
+  for (let i = 0; i < numPages; i += 1) {
     createPage({
       path: `/page/${i + 1}`,
       component: path.resolve('./src/templates/home.js'),
       context: {
-        pageSize: postsPerPage,
         pageNumber: i + 1,
       },
     });
-  });
-  // Creating index page
-  // createPage({
-  //   path: `/`,
-  //   component: path.resolve('./src/templates/home.js'),
-  //   context: {
-  //     pageSize: postsPerPage,
-  //     pageNumber: 1,
-  //   },
-  // });
+  }
 
-  postIds.forEach((postId) => {
+  postIds.forEach((post) => {
     createPage({
-      path: `/post/${postId.indexName}`,
+      path: `/post/${post.indexName}`,
       component: path.resolve('./src/templates/post.js'),
       context: {
-        indexName: postId.indexName,
-        image: `/${postId.image.match(/programming\d+/)[0]}/`,
+        image: `/${post.image.match(/programming\d+/)[0]}/`,
+        postID: post.id
       },
     });
   });
